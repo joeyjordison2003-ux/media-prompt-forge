@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="7 個 AI 生圖提示詞框架完整指南：PLATE 美食、FACE 人像、SPACE 建築室內、PROD 商品商拍、WIND 風光、ART 動漫插畫、VOID 科幻概念，含鏡頭焦段速查與 DALL-E 3 / Midjourney 底層邏輯對照。">
+  <title>AI 生圖提示詞框架指南：PLATE / FACE / SPACE / PROD / WIND / ART / VOID</title>
+  <link rel="stylesheet" href="./site.css">
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <p class="eyebrow">Prompt frameworks</p>
+      <h1>AI 生圖提示詞框架指南</h1>
+      <p>7 個領域框架把「寫提示詞」變成填空題：美食、人像、空間、商拍、風光、插畫、科幻，每個框架都有槽位拆解與專業詞彙。</p>
+      <a class="button" href="./app/index.html">在工具箱使用框架</a>
+    </header>
+
+    <section>
+      <h2>先懂模型：DALL-E 3 vs Midjourney</h2>
+      <div class="grid">
+        <article><h3>DALL-E 3 / GPT Image</h3><p>偏好自然語言描述，後台自動擴寫。不要堆 8k / hyper-realistic / trending on artstation——這些垃圾標籤會誘發蠟像感；用 35mm film grain、visible skin pores 等物理細節代替「寫實」。</p></article>
+        <article><h3>Midjourney</h3><p>偏好結構化短語與參數：--ar 寬高比、--style raw 降低預設美化、--stylize 控制藝術化、--chaos 控制多樣性。故事感要手動補背景與光影。</p></article>
+      </div>
+    </section>
+
+    <section>
+      <h2>鏡頭焦段速查</h2>
+      <div class="grid">
+        <article><h3>14-18mm 超廣角</h3><p>張力透視、深景深、宏大空間。適合風光、粗獷建築、科幻巨型都市。</p></article>
+        <article><h3>24-35mm 廣角</h3><p>人文視角、強故事感。適合紀實人像、室內全景、街拍。</p></article>
+        <article><h3>50mm 標準</h3><p>人眼視角、無畸變。適合家居、日常人像、桌上美食。</p></article>
+        <article><h3>85-105mm 中焦</h3><p>肖像黃金焦段、奶油虛化。適合人像特寫、產品擺拍。</p></article>
+        <article><h3>135-200mm 長焦</h3><p>強背景壓縮、主體剝離。適合野生動物、遠山壓縮。</p></article>
+      </div>
+    </section>
+
+    <section>
+      <h2>7 個領域框架</h2>
+      <div class="grid">
+        <article>
+          <h3>PLATE 美食框架</h3>
+          <p><strong>P</strong>roduct 主體擺盤 · <strong>L</strong>ayout 容器桌面 · <strong>A</strong>ngle 45度或俯視 · <strong>T</strong>exture 水分熱氣 · <strong>E</strong>nergy 光影。</p>
+          <p>關鍵詞：steam rising、condensation droplets、glistening glaze、matte black ceramic plate。</p>
+        </article>
+        <article>
+          <h3>FACE 人像框架</h3>
+          <p><strong>F</strong>ormat 膠片媒介 · <strong>A</strong>ctor 角色與皮膚瑕疵 · <strong>C</strong>amera 50/85mm · <strong>E</strong>nvironment 光影環境。</p>
+          <p>去蠟像感核心：visible pores、light freckles、35mm film grain、soft Rembrandt lighting。</p>
+        </article>
+        <article>
+          <h3>SPACE 空間框架</h3>
+          <p><strong>S</strong>tructure 風格流派 · <strong>P</strong>erspective 兩點透視 · <strong>A</strong>nchor 錨定材質 · <strong>C</strong>olors 色彩 · <strong>E</strong>nergy 光影。</p>
+          <p>關鍵詞：two-point perspective、bare concrete、warm oak、architectural digest style。</p>
+        </article>
+        <article>
+          <h3>PROD 商拍框架</h3>
+          <p><strong>P</strong>roduct 包裝質感 · <strong>R</strong>epresentative 背景道具 · <strong>O</strong>ptics 微距折射 · <strong>D</strong>irection 三點布光。</p>
+          <p>關鍵詞：rim light silhouette、refracted light caustics、basalt stone pedestal、water droplets。</p>
+        </article>
+        <article>
+          <h3>WIND 風光框架</h3>
+          <p><strong>W</strong>eather 大氣 · <strong>I</strong>mage 構圖 · <strong>N</strong>ature 時間季節 · <strong>D</strong>epth 焦段濾鏡。</p>
+          <p>關鍵詞：Tyndall light beams、golden hour、mirror reflection、long exposure、14mm ultra-wide。</p>
+        </article>
+        <article>
+          <h3>ART 插畫框架</h3>
+          <p><strong>A</strong>esthetic 流派 · <strong>R</strong>ender 筆觸 · <strong>T</strong>heme 配色。</p>
+          <p>關鍵詞：Ghibli watercolor、Makoto Shinkai、hand-drawn look、visible paper grain、explicit color palette。</p>
+        </article>
+        <article>
+          <h3>VOID 科幻框架</h3>
+          <p><strong>V</strong>ehicle 載具 · <strong>O</strong>ut-of-world 異界地貌 · <strong>I</strong>llumination 發光能量 · <strong>D</strong>ramatic 宏大比例。</p>
+          <p>關鍵詞：tiny figure for scale、volumetric lighting、wet asphalt neon reflection、megastructure。</p>
+        </article>
+      </div>
+    </section>
+
+    <section>
+      <h2>提示詞衝突審計（清洗器）</h2>
+      <p>工具箱內建三階段審計：垃圾標籤清洗（8k / hyper-realistic / masterpiece）、美學材質衝突檢測（侘寂 × 3D 高光字、膠片 × CGI、粗野 × 金飾）、動態過載檢測（靜謐 × 動態模糊）與文字預算 TBS 計分（總分 ≤ 6 防止文字亂碼）。</p>
+      <p><a href="./app/index.html">立即用清洗器審計你的 prompt</a></p>
+    </section>
+
+    <aside class="ad-slot" aria-label="Future sponsor slot">Sponsor slot disabled</aside>
+    <nav class="footer-nav">
+      <a href="./index.html">首頁</a>
+      <a href="./templates/index.html">模板庫</a>
+      <a href="./privacy.html">隱私說明</a>
+      <a href="./release-checklist.html">發布清單</a>
+    </nav>
+  </main>
+</body>
+</html>

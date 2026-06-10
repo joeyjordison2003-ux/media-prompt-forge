@@ -1,0 +1,397 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Media Prompt Forge：生圖與生視頻提示詞工具箱，支援 prompt 生成、清洗、模型路由與 QA 檢查。">
+  <title>Media Prompt Forge</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <main class="app-shell">
+    <aside class="sidebar" aria-label="工具導航">
+      <div class="brand-block">
+        <div class="brand-mark" aria-hidden="true">MPF</div>
+        <div>
+          <h1>Media Prompt Forge</h1>
+          <p>Image + Video Prompt Toolbox</p>
+        </div>
+      </div>
+
+      <nav class="tool-nav" aria-label="工具" role="tablist">
+        <button class="nav-button active" type="button" data-panel="builder" role="tab" aria-controls="panel-builder" aria-selected="true">生成器</button>
+        <button class="nav-button" type="button" data-panel="distiller" role="tab" aria-controls="panel-distiller" aria-selected="false">清洗器</button>
+        <button class="nav-button" type="button" data-panel="frameworks" role="tab" aria-controls="panel-frameworks" aria-selected="false">框架指南</button>
+        <button class="nav-button" type="button" data-panel="routes" role="tab" aria-controls="panel-routes" aria-selected="false">模型路由</button>
+        <button class="nav-button" type="button" data-panel="adapters" role="tab" aria-controls="panel-adapters" aria-selected="false">模型導出</button>
+        <button class="nav-button" type="button" data-panel="templates" role="tab" aria-controls="panel-templates" aria-selected="false">模板庫</button>
+        <button class="nav-button" type="button" data-panel="memory" role="tab" aria-controls="panel-memory" aria-selected="false">記憶卡</button>
+        <button class="nav-button" type="button" data-panel="tests" role="tab" aria-controls="panel-tests" aria-selected="false">測試矩陣</button>
+        <button class="nav-button" type="button" data-panel="sources" role="tab" aria-controls="panel-sources" aria-selected="false">知識雷達</button>
+        <button class="nav-button" type="button" data-panel="cases" role="tab" aria-controls="panel-cases" aria-selected="false">案例庫</button>
+        <button class="nav-button" type="button" data-panel="export" role="tab" aria-controls="panel-export" aria-selected="false">匯出</button>
+        <button class="nav-button" type="button" data-panel="qa" role="tab" aria-controls="panel-qa" aria-selected="false">QA 檢查</button>
+      </nav>
+
+      <div class="source-note">
+        <span>Local-first</span>
+        <strong>輸入內容只在瀏覽器處理</strong>
+      </div>
+    </aside>
+
+    <section class="workspace">
+      <header class="workspace-header">
+        <div>
+          <p class="eyebrow">新項目 MVP</p>
+          <h2>提示詞工作台</h2>
+        </div>
+        <div class="mode-toggle" aria-label="生成模式">
+          <button class="seg-button active" type="button" data-mode="image" aria-pressed="true">生圖</button>
+          <button class="seg-button" type="button" data-mode="video" aria-pressed="false">生視頻</button>
+        </div>
+      </header>
+
+      <div class="grid">
+        <section class="panel input-panel" aria-label="輸入">
+          <div class="panel-head">
+            <h3>需求輸入</h3>
+            <button class="ghost-button" id="loadExample" type="button">載入範例</button>
+          </div>
+
+          <label>
+            任務類型
+            <select id="taskType"></select>
+          </label>
+
+          <label>
+            領域框架
+            <select id="frameworkSelect"></select>
+          </label>
+          <div id="frameworkHints" class="framework-hints is-hidden"></div>
+
+          <div class="two-col">
+            <label>
+              目標模型
+              <select id="targetModel"></select>
+            </label>
+            <label>
+              畫幅比例
+              <select id="ratio">
+                <option value="16:9">16:9</option>
+                <option value="9:16">9:16</option>
+                <option value="1:1">1:1</option>
+                <option value="4:5">4:5</option>
+                <option value="3:2">3:2</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="two-col video-only">
+            <label>
+              時長
+              <select id="duration">
+                <option value="5 seconds">5 seconds</option>
+                <option value="8 seconds">8 seconds</option>
+                <option value="10 seconds">10 seconds</option>
+                <option value="15 seconds">15 seconds</option>
+              </select>
+            </label>
+            <label>
+              動作幅度
+              <select id="motionScale">
+                <option value="micro">微小差異</option>
+                <option value="small">小幅動作</option>
+                <option value="medium">中幅動作</option>
+                <option value="large">大幅動作</option>
+              </select>
+            </label>
+          </div>
+
+          <label>
+            主體 / 角色 / 商品
+            <textarea id="subject" rows="3" placeholder="例：同一位黑髮女性主角，銀色耳飾，紅色絲質上衣，冷靜但壓抑"></textarea>
+          </label>
+
+          <label>
+            動作 / 表情 / 狀態變化
+            <textarea id="action" rows="3" placeholder="例：抬眼看向鏡頭，嘴唇微張，右手慢慢收緊酒杯"></textarea>
+          </label>
+
+          <details class="advanced-section" open>
+            <summary>表演與物理增強</summary>
+            <div class="two-col">
+              <label>
+                肢體 / 動作質感
+                <select id="motionProfile"></select>
+              </label>
+              <label>
+                微表情 / 口型
+                <select id="expressionProfile"></select>
+              </label>
+            </div>
+            <label>
+              物理真實感
+              <select id="physicsProfile"></select>
+            </label>
+            <label>
+              表演補充
+              <textarea id="performanceNotes" rows="3" placeholder="例：重心從左腳慢慢轉到右腳，肩頸先動，髮絲與衣料延遲 0.2 秒跟隨；眼神先動，嘴角後動。"></textarea>
+            </label>
+          </details>
+
+          <label>
+            場景 / 世界觀 / 背景
+            <textarea id="scene" rows="3" placeholder="例：黑色大理石私人酒廊，雨夜窗外霓虹反射，低照度暖光"></textarea>
+          </label>
+
+          <div class="two-col">
+            <label>
+              鏡頭 / 構圖
+              <textarea id="camera" rows="3" placeholder="例：85mm close-up, shallow depth of field, centered eyes"></textarea>
+            </label>
+            <label>
+              光線 / 色彩
+              <textarea id="light" rows="3" placeholder="例：warm key light from camera left, cool neon rim light"></textarea>
+            </label>
+          </div>
+
+          <label>
+            風格 / 質感 / 參考
+            <textarea id="style" rows="3" placeholder="例：cinematic noir, ARRI Alexa 65, editorial realism"></textarea>
+          </label>
+
+          <label>
+            關鍵細節 / 文字 / logo / 材質
+            <textarea id="details" rows="3" placeholder="例：耳飾形狀不變，衣料有真絲反光，玻璃杯有水珠"></textarea>
+          </label>
+
+          <label>
+            約束 / 禁止項
+            <textarea id="constraints" rows="3" placeholder="例：no watermark, no extra fingers, do not change face, no text unless specified"></textarea>
+          </label>
+
+          <div class="actions">
+            <button class="primary-button" id="buildPrompt" type="button">生成提示詞</button>
+            <button class="secondary-button" id="clearForm" type="button">清空</button>
+          </div>
+        </section>
+
+        <section class="panel output-panel" aria-live="polite">
+          <div class="panel-head">
+            <h3>輸出</h3>
+            <button class="ghost-button" id="copyPrompt" type="button">複製</button>
+          </div>
+
+          <div class="tab-panel active" id="panel-builder" role="tabpanel" aria-hidden="false">
+            <pre id="promptOutput">選擇模式與任務後，點「生成提示詞」。</pre>
+          </div>
+
+          <div class="tab-panel" id="panel-distiller" role="tabpanel" aria-hidden="true">
+            <label>
+              待清洗 Prompt
+              <textarea id="distillInput" rows="8" placeholder="把含有 agent 指令、workflow、critical rules 的長 prompt 貼到這裡"></textarea>
+            </label>
+            <div class="actions">
+              <button class="primary-button" id="distillButton" type="button">清洗 Prompt</button>
+            </div>
+            <pre id="distillOutput">清洗後的 model-facing prompt 會顯示在這裡。</pre>
+            <div id="auditReport" class="audit-report"></div>
+          </div>
+
+          <div class="tab-panel" id="panel-frameworks" role="tabpanel" aria-hidden="true">
+            <div class="case-controls">
+              <label>
+                搜索框架
+                <input id="frameworkSearch" type="search" placeholder="例：PROD、商拍、人像、rim light">
+              </label>
+            </div>
+            <div id="frameworkLogic" class="evaluation-card"></div>
+            <div id="frameworkOutput" class="framework-list"></div>
+          </div>
+
+          <div class="tab-panel" id="panel-routes" role="tabpanel" aria-hidden="true">
+            <div id="routeOutput" class="route-list"></div>
+          </div>
+
+          <div class="tab-panel" id="panel-adapters" role="tabpanel" aria-hidden="true">
+            <div id="adapterOutput" class="adapter-list"></div>
+          </div>
+
+          <div class="tab-panel" id="panel-templates" role="tabpanel" aria-hidden="true">
+            <div class="case-controls">
+              <label>
+                搜索模板
+                <input id="templateSearch" type="search" placeholder="例：口型、舞蹈、商品圖、角色卡">
+              </label>
+              <div class="two-col">
+                <label>
+                  模式
+                  <select id="templateModeFilter">
+                    <option value="all">全部</option>
+                    <option value="image">生圖</option>
+                    <option value="video">生視頻</option>
+                  </select>
+                </label>
+                <label>
+                  任務
+                  <select id="templateTaskFilter"></select>
+                </label>
+              </div>
+            </div>
+            <div id="templateOutput" class="template-list"></div>
+          </div>
+
+          <div class="tab-panel" id="panel-memory" role="tabpanel" aria-hidden="true">
+            <div class="case-controls">
+              <label>
+                搜索記憶卡
+                <input id="memorySearch" type="search" placeholder="例：角色、酒廊、Logo、黑色西裝">
+              </label>
+              <label>
+                類型篩選
+                <select id="memoryTypeFilter"></select>
+              </label>
+            </div>
+            <div class="case-controls">
+              <div class="two-col">
+                <label>
+                  卡片類型
+                  <select id="memoryCardType"></select>
+                </label>
+                <label>
+                  標題
+                  <input id="memoryTitle" type="text" placeholder="例：林一棠紅裝角色鎖定">
+                </label>
+              </div>
+              <label>
+                內容
+                <textarea id="memoryContent" rows="5" placeholder="寫入可直接注入 prompt 的身份、場景、商品、服裝或風格事實。"></textarea>
+              </label>
+              <label>
+                標籤
+                <input id="memoryTags" type="text" placeholder="例：identity, noir, wardrobe">
+              </label>
+              <div class="actions">
+                <button class="primary-button" id="saveMemoryCard" type="button">保存記憶卡</button>
+                <button class="secondary-button" id="resetMemoryEditor" type="button">清空編輯器</button>
+              </div>
+            </div>
+            <div id="memoryOutput" class="memory-list"></div>
+          </div>
+
+          <div class="tab-panel" id="panel-tests" role="tabpanel" aria-hidden="true">
+            <div class="case-controls">
+              <label>
+                搜索測試
+                <input id="testSearch" type="search" placeholder="例：Grok、口型、商品、首尾幀">
+              </label>
+              <div class="two-col">
+                <label>
+                  任務
+                  <select id="testTaskFilter"></select>
+                </label>
+                <label>
+                  風險
+                  <select id="testRiskFilter">
+                    <option value="all">全部</option>
+                    <option value="low">low</option>
+                    <option value="medium">medium</option>
+                    <option value="needs-test">needs-test</option>
+                  </select>
+                </label>
+              </div>
+            </div>
+            <div id="testSummary" class="evaluation-card"></div>
+            <div id="testOutput" class="test-list"></div>
+          </div>
+
+          <div class="tab-panel" id="panel-sources" role="tabpanel" aria-hidden="true">
+            <div class="case-controls">
+              <label>
+                搜索來源
+                <input id="sourceSearch" type="search" placeholder="例：toapis、Grok、商品、prompt_methodology">
+              </label>
+              <div class="two-col">
+                <label>
+                  領域
+                  <select id="sourceAreaFilter"></select>
+                </label>
+                <label>
+                  狀態
+                  <select id="sourceStatusFilter">
+                    <option value="all">全部狀態</option>
+                    <option value="ingested">ingested</option>
+                    <option value="partial">partial</option>
+                    <option value="needs-mining">needs-mining</option>
+                    <option value="needs-test">needs-test</option>
+                  </select>
+                </label>
+              </div>
+            </div>
+            <div id="sourceSummary" class="evaluation-card"></div>
+            <div id="sourceOutput" class="source-list"></div>
+            <h3 class="section-title">高優先級缺口</h3>
+            <div id="gapOutput" class="gap-list"></div>
+          </div>
+
+          <div class="tab-panel" id="panel-cases" role="tabpanel" aria-hidden="true">
+            <div class="case-controls">
+              <label>
+                搜索案例
+                <input id="caseSearch" type="search" placeholder="例：Grok、口型、商品、角色一致性">
+              </label>
+              <div class="two-col">
+                <label>
+                  任務
+                  <select id="caseTaskFilter"></select>
+                </label>
+                <label>
+                  結果
+                  <select id="caseOutcomeFilter">
+                    <option value="all">全部</option>
+                    <option value="success">success</option>
+                    <option value="mixed">mixed</option>
+                    <option value="needs-test">needs-test</option>
+                    <option value="failure">failure</option>
+                  </select>
+                </label>
+              </div>
+            </div>
+            <div id="evaluationOutput" class="evaluation-card"></div>
+            <div id="caseOutput" class="case-list"></div>
+          </div>
+
+          <div class="tab-panel" id="panel-export" role="tabpanel" aria-hidden="true">
+            <div class="case-controls">
+              <div class="two-col">
+                <label>
+                  格式
+                  <select id="exportFormat">
+                    <option value="markdown">Markdown</option>
+                    <option value="json">JSON</option>
+                  </select>
+                </label>
+                <label>
+                  檔名
+                  <input id="exportFilename" type="text" value="media-prompt-forge-export">
+                </label>
+              </div>
+              <div class="actions">
+                <button class="primary-button" id="copyExport" type="button">複製匯出</button>
+                <button class="secondary-button" id="downloadExport" type="button">下載</button>
+              </div>
+            </div>
+            <pre id="exportOutput">選擇格式後會生成匯出內容。</pre>
+          </div>
+
+          <div class="tab-panel" id="panel-qa" role="tabpanel" aria-hidden="true">
+            <div id="qaOutput" class="check-list"></div>
+          </div>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <script type="module" src="./app.js"></script>
+</body>
+</html>

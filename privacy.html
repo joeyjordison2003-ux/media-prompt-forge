@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Media Prompt Forge 隱私說明：目前工具在瀏覽器本地處理 prompt，不默認上傳原始內容。">
+  <title>隱私說明 · Media Prompt Forge</title>
+  <link rel="stylesheet" href="./site.css">
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <p class="eyebrow">Privacy</p>
+      <h1>隱私說明</h1>
+      <p>目前版本是 local-first 靜態工具。Prompt 生成、模板、案例、模型導出和 QA 都在瀏覽器內完成。</p>
+      <a class="button" href="./app/index.html">打開工具箱</a>
+    </header>
+    <section>
+      <h2>資料處理</h2>
+      <article><p>目前不調用生成 API，不默認記錄原始 prompt，不把記憶卡上傳到服務器。</p></article>
+      <article><p>自定義記憶卡使用瀏覽器 localStorage：<code>mpf.memoryCards.v1</code>。</p></article>
+      <article><p>Markdown / JSON 匯出可能包含你的 prompt，請只在你願意時分享。</p></article>
+    </section>
+    <aside class="ad-slot" aria-label="Future sponsor slot">Sponsor slot disabled</aside>
+    <nav class="footer-nav"><a href="./index.html">首頁</a><a href="./deployment.html">部署</a><a href="./release-checklist.html">發布清單</a></nav>
+  </main>
+</body>
+</html>

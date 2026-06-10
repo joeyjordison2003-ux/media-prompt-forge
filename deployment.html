@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Media Prompt Forge 靜態部署說明，支援本地預覽、Cloudflare Pages、GitHub Pages 和 1Panel/Nginx。">
+  <title>部署說明 · Media Prompt Forge</title>
+  <link rel="stylesheet" href="./site.css">
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <p class="eyebrow">Deployment</p>
+      <h1>部署說明</h1>
+      <p>目前是 no-build 靜態項目，可以直接部署 HTML/CSS/JS 文件。</p>
+      <a class="button" href="./app/index.html">打開工具箱</a>
+    </header>
+    <section>
+      <h2>本地預覽</h2>
+      <article><p><code>python3 -m http.server 8766</code> 從項目根目錄啟動，然後打開 <code>/public/</code> 或 <code>/app/</code>。</p></article>
+      <h2>靜態托管</h2>
+      <article><p>Cloudflare Pages 可使用 no build command，output directory 設為項目根目錄。</p></article>
+      <article><p>1Panel/Nginx 可把項目根目錄作為靜態 root，將首頁指向 <code>public/index.html</code>。</p></article>
+    </section>
+    <aside class="ad-slot" aria-label="Future sponsor slot">Sponsor slot disabled</aside>
+    <nav class="footer-nav"><a href="./index.html">首頁</a><a href="./privacy.html">隱私</a><a href="./release-checklist.html">發布清單</a></nav>
+  </main>
+</body>
+</html>
