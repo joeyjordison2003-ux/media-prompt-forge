@@ -1025,6 +1025,21 @@ const SOURCE_RADAR_CARDS = [
     tags: ['jimeng', 'inspiration', 'matrix']
   },
   {
+    id: 'SRC015',
+    title: 'Camera Move Template Packs',
+    area: 'template',
+    status: 'ingested',
+    priority: 'medium',
+    summary: '《即梦4.5漫剧运镜50条.xlsx》（4 表）+《12组电影级组合运镜.docx》：單鏡頭級參數化運鏡模板。',
+    insight: '已由 scripts/gen_camera_moves_data.py 生成 camera_moves_data.js，落地為運鏡模板面板（59 條 / 8 類）。',
+    sources: [
+      '/Users/yinweiqi/Desktop/人物卡 2/分镜运镜提示词＋AI指令整理/小说漫剧提示词/即梦 4.5 AI 漫剧运镜提示词 50 条.xlsx',
+      '/Users/yinweiqi/Desktop/人物卡 2/分镜运镜提示词＋AI指令整理/AI运镜提示词/12组电影级组合运镜提示词.docx'
+    ],
+    nextAction: 'docx 圖生視頻動態段與其餘 AI运镜 docx 待評估；28模板目錄為真人拍攝表格，已排除。',
+    tags: ['camera-moves', 'jimeng', 'template']
+  },
+  {
     id: 'SRC010',
     title: 'Product And Ecommerce Prompt Files',
     area: 'image',
@@ -1622,6 +1637,7 @@ const NAV_GROUPS = [
   { label: '知識', panels: [
     { id: 'frameworks', label: '框架指南' },
     { id: 'styles', label: '風格庫' },
+    { id: 'cameramoves', label: '運鏡模板' },
     { id: 'routes', label: '模型路由' },
     { id: 'cases', label: '案例庫' },
     { id: 'sources', label: '知識雷達' }

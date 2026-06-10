@@ -26,6 +26,7 @@ import {
 } from "./data.js";
 import { STYLE_CATEGORIES, CINEMATIC_STYLES } from "./styles_data.js";
 import { INSPIRATION_COLUMNS, INSPIRATION_OPTIONS } from "./inspiration_data.js";
+import { CAMERA_MOVE_CATEGORIES, CAMERA_MOVE_TEMPLATES } from "./camera_moves_data.js";
 
 let currentMode = 'image';
 let activePanel = 'builder';
@@ -108,6 +109,39 @@ const FIELD_LABELS = {
   details: '關鍵細節',
   constraints: '約束 / 禁止項'
 };
+
+function populateCameraMoveFilters() {
+  $('cameraMoveCategoryFilter').innerHTML = [
+    '<option value="all">全部類別</option>',
+    ...CAMERA_MOVE_CATEGORIES.map((category) => `<option value="${category}">${category}</option>`)
+  ].join('');
+}
+
+function renderCameraMoves() {
+  const summary = $('cameraMoveSummary');
+  if (!summary) return;
+  const query = value('cameraMoveSearch').toLowerCase();
+  const category = value('cameraMoveCategoryFilter') || 'all';
+  const items = CAMERA_MOVE_TEMPLATES.filter((item) => {
+    const queryOk = !query || `${item.name} ${item.template} ${item.scene}`.toLowerCase().includes(query);
+    const categoryOk = category === 'all' || item.category === category;
+    return queryOk && categoryOk;
+  });
+  summary.innerHTML = `
+    <h4>運鏡模板 ${items.length}/${CAMERA_MOVE_TEMPLATES.length}</h4>
+    <p>單鏡頭級完整模板（含焦距/景深/光線佔位符）。「插入」寫入鏡頭欄後，把 [ ] 佔位符換成你的內容。</p>
+  `;
+  $('cameraMoveOutput').innerHTML = items.length ? items.map((item) => `
+    <div class="style-row">
+      <span class="case-pill">${escapeHtml(item.name)}</span>
+      <span class="style-text">${escapeHtml(item.template)}${item.scene ? `<br><em>適配：${escapeHtml(item.scene)}</em>` : ''}</span>
+      <span class="style-actions">
+        <button class="ghost-button copy-style" type="button" data-text="${escapeHtml(item.template)}">複製</button>
+        <button class="ghost-button insert-move" type="button" data-text="${escapeHtml(item.template)}">插入</button>
+      </span>
+    </div>
+  `).join('') : '<p>沒有匹配的運鏡模板。</p>';
+}
 
 let currentInspiration = {};
 
@@ -372,6 +406,7 @@ function updatePanel(panel) {
   if (panel === 'styles') renderStyles();
   if (panel === 'history') renderHistory();
   if (panel === 'inspiration') renderInspiration();
+  if (panel === 'cameramoves') renderCameraMoves();
   if (panel === 'cases') renderCases();
   if (panel === 'export') renderExport();
   if (panel === 'qa') renderQa();
@@ -1670,6 +1705,7 @@ function buildAll() {
   renderStyles();
   renderHistory();
   renderInspiration();
+  renderCameraMoves();
   renderCases();
   renderExport();
   renderQa();
@@ -1774,6 +1810,18 @@ function bindEvents() {
     if (target.classList.contains('restore-history')) restoreHistoryEntry(id);
     if (target.classList.contains('delete-history')) deleteHistoryEntry(id);
   });
+  $('cameraMoveOutput').addEventListener('click', (event) => {
+    const copyButton = event.target.closest('.copy-style');
+    if (copyButton) {
+      copyText(copyButton.dataset.text, copyButton);
+      return;
+    }
+    const insertButton = event.target.closest('.insert-move');
+    if (insertButton) {
+      appendToField('camera', insertButton.dataset.text);
+      buildAll();
+    }
+  });
   $('rollInspiration').addEventListener('click', () => rollInspiration());
   $('applyInspiration').addEventListener('click', applyInspiration);
   $('inspirationOutput').addEventListener('click', (event) => {
@@ -1821,6 +1869,7 @@ function init() {
   populateSourceFilters();
   populateFrameworkSelect();
   populateStyleFilters();
+  populateCameraMoveFilters();
   loadMemoryCards();
   document.querySelectorAll('.video-only').forEach((node) => node.classList.add('is-hidden'));
   bindEvents();
