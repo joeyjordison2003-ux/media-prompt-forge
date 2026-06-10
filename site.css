@@ -97,3 +97,15 @@ a { color: var(--accent); }
 @media (max-width: 640px) {
   .hero { min-height: 48vh; }
 }
+
+
+/* 自動暗色（跟隨系統） */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #131a1c;
+    --surface: #1b2426;
+    --ink: #e6ebe9;
+    --muted: #93a4a0;
+    --rule: #32403f;
+  }
+}

@@ -183,6 +183,28 @@ function applyInspiration() {
   buildAll();
 }
 
+const THEME_STORAGE_KEY = 'mpf_theme';
+const THEME_LABELS = { auto: '主題：跟隨系統', light: '主題：亮色', dark: '主題：暗色' };
+
+function applyTheme(theme) {
+  if (theme === 'light' || theme === 'dark') {
+    document.documentElement.dataset.theme = theme;
+  } else {
+    delete document.documentElement.dataset.theme;
+  }
+  const button = $('themeToggle');
+  if (button) button.textContent = THEME_LABELS[theme] || THEME_LABELS.auto;
+}
+
+function cycleTheme() {
+  const order = ['auto', 'light', 'dark'];
+  const current = localStorage.getItem(THEME_STORAGE_KEY) || 'auto';
+  const next = order[(order.indexOf(current) + 1) % order.length];
+  if (next === 'auto') localStorage.removeItem(THEME_STORAGE_KEY);
+  else localStorage.setItem(THEME_STORAGE_KEY, next);
+  applyTheme(next);
+}
+
 function renderOnboarding() {
   const card = $('onboardingCard');
   if (!card) return;
@@ -1822,6 +1844,7 @@ function bindEvents() {
       buildAll();
     }
   });
+  $('themeToggle').addEventListener('click', cycleTheme);
   $('rollInspiration').addEventListener('click', () => rollInspiration());
   $('applyInspiration').addEventListener('click', applyInspiration);
   $('inspirationOutput').addEventListener('click', (event) => {
@@ -1857,6 +1880,10 @@ function bindEvents() {
 }
 
 function init() {
+  applyTheme(localStorage.getItem(THEME_STORAGE_KEY) || 'auto');
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./sw.js').catch(() => {});
+  }
   populateNav();
   renderOnboarding();
   populateTasks();

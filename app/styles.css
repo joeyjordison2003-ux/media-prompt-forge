@@ -10,6 +10,11 @@
   --gold: #a37216;
   --focus: #155e75;
   --shadow: 0 18px 45px rgba(28, 35, 38, 0.08);
+  --card: #fbfcfa;
+  --chip: #ffffff;
+  --soft: #f8faf9;
+  --accent-soft: #e7f4f1;
+  --code-bg: #101719;
   --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   --sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
@@ -57,7 +62,7 @@ input:focus-visible {
 
 .sidebar {
   border-right: 1px solid var(--rule);
-  background: #fbfcfa;
+  background: var(--card);
   padding: 24px;
   display: flex;
   flex-direction: column;
@@ -76,7 +81,7 @@ input:focus-visible {
   display: grid;
   place-items: center;
   background: var(--ink);
-  color: #fff;
+  color: var(--bg);
   border-radius: 8px;
   font-family: var(--mono);
   font-size: 13px;
@@ -137,7 +142,7 @@ label,
 .seg-button.active {
   border-color: var(--accent);
   color: var(--accent);
-  background: #e7f4f1;
+  background: var(--accent-soft);
   font-weight: 700;
 }
 
@@ -244,7 +249,7 @@ select {
   width: 100%;
   border: 1px solid var(--rule);
   border-radius: 8px;
-  background: #fff;
+  background: var(--chip);
   color: var(--ink);
   padding: 10px 12px;
   resize: vertical;
@@ -264,7 +269,7 @@ textarea {
 .advanced-section {
   border: 1px solid var(--rule);
   border-radius: 8px;
-  background: #fbfcfa;
+  background: var(--card);
   padding: 12px 12px 0;
   margin: 2px 0 14px;
 }
@@ -297,7 +302,7 @@ textarea {
 }
 
 .secondary-button {
-  background: #f8faf9;
+  background: var(--soft);
 }
 
 .ghost-button {
@@ -313,7 +318,7 @@ pre {
   overflow-x: auto;
   margin: 0;
   min-height: 260px;
-  background: #101719;
+  background: var(--code-bg);
   color: #eef7f5;
   border-radius: 8px;
   padding: 16px;
@@ -326,7 +331,7 @@ pre {
   border: 1px solid var(--rule);
   border-radius: 8px;
   padding: 14px;
-  background: #fbfcfa;
+  background: var(--card);
   margin-bottom: 12px;
   min-width: 0;
 }
@@ -365,7 +370,7 @@ pre {
   border: 1px solid var(--rule);
   border-radius: 8px;
   padding: 14px;
-  background: #fbfcfa;
+  background: var(--card);
   min-width: 0;
 }
 
@@ -423,7 +428,7 @@ pre {
   color: var(--muted);
   font-size: 12px;
   padding: 3px 8px;
-  background: #fff;
+  background: var(--chip);
 }
 
 .source-card details {
@@ -549,7 +554,7 @@ pre {
   border: 1px solid var(--rule);
   border-radius: 8px;
   padding: 14px;
-  background: #fbfcfa;
+  background: var(--card);
   min-width: 0;
 }
 
@@ -611,7 +616,7 @@ pre {
 .chip {
   border: 1px solid var(--rule);
   border-radius: 999px;
-  background: #fff;
+  background: var(--chip);
   color: var(--ink);
   font-size: 12px;
   padding: 4px 10px;
@@ -646,7 +651,7 @@ pre {
   border: 1px solid rgba(184, 75, 58, 0.4);
   border-radius: 8px;
   padding: 10px 12px;
-  background: #fbfcfa;
+  background: var(--card);
   font-size: 13px;
 }
 
@@ -711,7 +716,7 @@ pre {
   border: 1px solid var(--rule);
   border-radius: 8px;
   padding: 8px 12px;
-  background: #fbfcfa;
+  background: var(--card);
   min-width: 0;
 }
 
@@ -758,7 +763,7 @@ pre {
   border: 1px solid var(--rule);
   border-radius: 8px;
   padding: 12px;
-  background: #fbfcfa;
+  background: var(--card);
   min-width: 0;
 }
 
@@ -790,4 +795,42 @@ pre {
   font-size: 13px;
   color: var(--muted);
   line-height: 1.5;
+}
+
+/* 暗色主題（app-polish-dark-mode-pwa） */
+:root[data-theme="dark"] {
+  --bg: #131a1c;
+  --surface: #1b2426;
+  --surface-2: #202b2d;
+  --ink: #e6ebe9;
+  --muted: #93a4a0;
+  --rule: #32403f;
+  --shadow: 0 18px 45px rgba(0, 0, 0, 0.45);
+  --card: #1f292b;
+  --chip: #243031;
+  --soft: #1d2729;
+  --accent-soft: #173733;
+  --code-bg: #0b1112;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]):not([data-theme="dark"]) {
+    --bg: #131a1c;
+    --surface: #1b2426;
+    --surface-2: #202b2d;
+    --ink: #e6ebe9;
+    --muted: #93a4a0;
+    --rule: #32403f;
+    --shadow: 0 18px 45px rgba(0, 0, 0, 0.45);
+    --card: #1f292b;
+    --chip: #243031;
+    --soft: #1d2729;
+    --accent-soft: #173733;
+    --code-bg: #0b1112;
+  }
+}
+
+.theme-toggle {
+  width: 100%;
+  margin-bottom: 10px;
 }
