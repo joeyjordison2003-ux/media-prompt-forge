@@ -27,6 +27,7 @@ import {
 import { STYLE_CATEGORIES, CINEMATIC_STYLES } from "./styles_data.js";
 import { INSPIRATION_COLUMNS, INSPIRATION_OPTIONS } from "./inspiration_data.js";
 import { CAMERA_MOVE_CATEGORIES, CAMERA_MOVE_TEMPLATES } from "./camera_moves_data.js";
+import { EN_MAP } from "./i18n_data.js";
 
 let currentMode = 'image';
 let activePanel = 'builder';
@@ -49,7 +50,7 @@ function setValue(id, next) {
 function populateTasks() {
   const select = $('taskType');
   const available = TASKS.filter((task) => task.modes.includes(currentMode));
-  select.innerHTML = available.map((task) => `<option value="${task.id}">${task.label}</option>`).join('');
+  select.innerHTML = available.map((task) => `<option value="${task.id}">${t(task.label)}</option>`).join('');
 }
 
 function populateModels() {
@@ -136,8 +137,8 @@ function renderCameraMoves() {
       <span class="case-pill">${escapeHtml(item.name)}</span>
       <span class="style-text">${escapeHtml(item.template)}${item.scene ? `<br><em>適配：${escapeHtml(item.scene)}</em>` : ''}</span>
       <span class="style-actions">
-        <button class="ghost-button copy-style" type="button" data-text="${escapeHtml(item.template)}">複製</button>
-        <button class="ghost-button insert-move" type="button" data-text="${escapeHtml(item.template)}">插入</button>
+        <button class="ghost-button copy-style" type="button" data-text="${escapeHtml(item.template)}">${t('複製')}</button>
+        <button class="ghost-button insert-move" type="button" data-text="${escapeHtml(item.template)}">${t('插入')}</button>
       </span>
     </div>
   `).join('') : '<p>沒有匹配的運鏡模板。</p>';
@@ -167,7 +168,7 @@ function renderInspiration() {
       <span class="case-pill">${escapeHtml(column.label)}</span>
       <span class="style-text">${escapeHtml(currentInspiration[column.key] || '——')}</span>
       <span class="style-actions">
-        <button class="ghost-button reroll-one" type="button" data-key="${column.key}">重搖</button>
+        <button class="ghost-button reroll-one" type="button" data-key="${column.key}">${t('重搖')}</button>
       </span>
     </div>
   `).join('');
@@ -183,6 +184,54 @@ function applyInspiration() {
   buildAll();
 }
 
+const LANG_STORAGE_KEY = 'mpf_lang';
+let currentLang = localStorage.getItem(LANG_STORAGE_KEY) === 'en' ? 'en' : 'zh';
+
+function t(zh) {
+  return currentLang === 'en' ? (EN_MAP[zh] || zh) : zh;
+}
+
+function translateTextNodes(root) {
+  const targets = root.querySelectorAll('label, button, h2, h3, h4, summary, .eyebrow, .source-note span, .source-note strong, .brand-block p');
+  targets.forEach((el) => {
+    for (const child of el.childNodes) {
+      if (child.nodeType !== Node.TEXT_NODE) continue;
+      const raw = child.textContent;
+      if (!raw.trim()) continue;
+      if (!el.dataset.zhSrc) el.dataset.zhSrc = raw.trim();
+      const key = el.dataset.zhSrc;
+      child.textContent = raw.replace(raw.trim(), t(key));
+      break;
+    }
+  });
+  root.querySelectorAll('[placeholder]').forEach((el) => {
+    if (!el.dataset.zhPh) el.dataset.zhPh = el.getAttribute('placeholder');
+    if (currentLang === 'en' && !EN_MAP[el.dataset.zhPh]) return;
+    el.setAttribute('placeholder', t(el.dataset.zhPh));
+  });
+}
+
+function applyStaticI18n() {
+  document.documentElement.lang = currentLang === 'en' ? 'en' : 'zh-Hant';
+  translateTextNodes(document);
+  const langButton = $('langToggle');
+  if (langButton) langButton.textContent = currentLang === 'en' ? 'Language: EN' : '語言：中文';
+}
+
+function toggleLang() {
+  currentLang = currentLang === 'en' ? 'zh' : 'en';
+  if (currentLang === 'en') localStorage.setItem(LANG_STORAGE_KEY, 'en');
+  else localStorage.removeItem(LANG_STORAGE_KEY);
+  applyStaticI18n();
+  populateNav();
+  populateTasks();
+  populateProfiles();
+  populateFrameworkSelect();
+  applyTheme(localStorage.getItem(THEME_STORAGE_KEY) || 'auto');
+  buildAll();
+  renderOnboarding();
+}
+
 const THEME_STORAGE_KEY = 'mpf_theme';
 const THEME_LABELS = { auto: '主題：跟隨系統', light: '主題：亮色', dark: '主題：暗色' };
 
@@ -193,7 +242,7 @@ function applyTheme(theme) {
     delete document.documentElement.dataset.theme;
   }
   const button = $('themeToggle');
-  if (button) button.textContent = THEME_LABELS[theme] || THEME_LABELS.auto;
+  if (button) button.textContent = t(THEME_LABELS[theme] || THEME_LABELS.auto);
 }
 
 function cycleTheme() {
@@ -216,21 +265,21 @@ function renderOnboarding() {
   }
   card.innerHTML = `
     <div class="onboarding-head">
-      <strong>快速開始</strong>
-      <button class="ghost-button" id="dismissOnboarding" type="button">不再顯示</button>
+      <strong>${t('快速開始')}</strong>
+      <button class="ghost-button" id="dismissOnboarding" type="button">${t('不再顯示')}</button>
     </div>
-    ${ONBOARDING_STEPS.map((step) => `<p><strong>${escapeHtml(step.title)}</strong> ${escapeHtml(step.text)}</p>`).join('')}
+    ${ONBOARDING_STEPS.map((step) => `<p><strong>${escapeHtml(t(step.title))}</strong> ${escapeHtml(t(step.text))}</p>`).join('')}
     <div class="actions">
-      <button class="ghost-button" id="onboardingTemplates" type="button">打開模板庫</button>
-      <button class="ghost-button" id="onboardingExample" type="button">載入範例</button>
+      <button class="ghost-button" id="onboardingTemplates" type="button">${t('打開模板庫')}</button>
+      <button class="ghost-button" id="onboardingExample" type="button">${t('載入範例')}</button>
     </div>
   `;
 }
 
 function populateNav() {
   document.querySelector('.tool-nav').innerHTML = NAV_GROUPS.map((group) => `
-    <p class="nav-group-label">${group.label}</p>
-    ${group.panels.map((panel) => `<button class="nav-button${panel.id === activePanel ? ' active' : ''}" type="button" data-panel="${panel.id}" role="tab" aria-controls="panel-${panel.id}" aria-selected="${panel.id === activePanel}">${panel.label}</button>`).join('')}
+    <p class="nav-group-label">${t(group.label)}</p>
+    ${group.panels.map((panel) => `<button class="nav-button${panel.id === activePanel ? ' active' : ''}" type="button" data-panel="${panel.id}" role="tab" aria-controls="panel-${panel.id}" aria-selected="${panel.id === activePanel}">${t(panel.label)}</button>`).join('')}
   `).join('');
 }
 
@@ -297,9 +346,9 @@ function renderHistory() {
       </div>
       <p>${escapeHtml(entry.prompt.slice(0, 160))}${entry.prompt.length > 160 ? '…' : ''}</p>
       <div class="actions">
-        <button class="ghost-button copy-history" type="button" data-history-id="${entry.id}">複製</button>
-        <button class="ghost-button restore-history" type="button" data-history-id="${entry.id}">恢復</button>
-        <button class="ghost-button delete-history" type="button" data-history-id="${entry.id}">刪除</button>
+        <button class="ghost-button copy-history" type="button" data-history-id="${entry.id}">${t('複製')}</button>
+        <button class="ghost-button restore-history" type="button" data-history-id="${entry.id}">${t('恢復')}</button>
+        <button class="ghost-button delete-history" type="button" data-history-id="${entry.id}">${t('刪除')}</button>
       </div>
     </article>
   `).join('') : '<p>還沒有歷史記錄。去生成器點「生成提示詞」。</p>';
@@ -342,8 +391,8 @@ function renderStyles() {
         <span class="case-pill">${escapeHtml(cat ? cat.label : item.category)}</span>
         <span class="style-text">${escapeHtml(item.text)}</span>
         <span class="style-actions">
-          <button class="ghost-button copy-style" type="button" data-text="${escapeHtml(item.text)}">複製</button>
-          <button class="ghost-button insert-style" type="button" data-text="${escapeHtml(item.text)}" data-target="${cat ? cat.targetField : 'style'}">插入</button>
+          <button class="ghost-button copy-style" type="button" data-text="${escapeHtml(item.text)}">${t('複製')}</button>
+          <button class="ghost-button insert-style" type="button" data-text="${escapeHtml(item.text)}" data-target="${cat ? cat.targetField : 'style'}">${t('插入')}</button>
         </span>
       </div>
     `;
@@ -355,7 +404,7 @@ function populateFrameworkSelect() {
   const previous = select.value;
   const available = PROMPT_FRAMEWORKS.filter((framework) => framework.forModes.includes(currentMode));
   select.innerHTML = [
-    '<option value="none">不使用框架</option>',
+    `<option value="none">${t('不使用框架')}</option>`,
     ...available.map((framework) => `<option value="${framework.id}">${framework.name} · ${framework.domain}</option>`)
   ].join('');
   select.value = available.some((framework) => framework.id === previous) ? previous : 'none';
@@ -887,7 +936,7 @@ function deleteMemoryCard(cardId) {
 function renderMemoryCards() {
   const cards = filteredMemoryCards();
   $('memoryOutput').innerHTML = cards.length ? cards.map((card) => {
-    const deleteButton = card.builtIn ? '' : `<button class="secondary-button delete-memory" type="button" data-memory-id="${escapeHtml(card.id)}">刪除</button>`;
+    const deleteButton = card.builtIn ? '' : `<button class="secondary-button delete-memory" type="button" data-memory-id="${escapeHtml(card.id)}">${t('刪除')}</button>`;
     return `
       <article class="memory-card">
         <h4>${escapeHtml(card.title)} <span class="score">${escapeHtml(card.type)}${card.builtIn ? ' · built-in' : ''}</span></h4>
@@ -1303,7 +1352,7 @@ function renderFrameworks() {
         </div>
       `).join('')}
       <div class="actions">
-        <button class="ghost-button use-framework" type="button" data-framework-id="${framework.id}">在生成器使用此框架</button>
+        <button class="ghost-button use-framework" type="button" data-framework-id="${framework.id}">${t('在生成器使用此框架')}</button>
       </div>
     </article>
   `).join('') : '<p>沒有匹配的框架。</p>';
@@ -1749,11 +1798,11 @@ async function copyText(text, button) {
   try {
     await navigator.clipboard.writeText(text);
     const old = button.textContent;
-    button.textContent = '已複製';
+    button.textContent = t('已複製');
     setTimeout(() => { button.textContent = old; }, 1500);
   } catch (error) {
-    button.textContent = '複製失敗';
-    setTimeout(() => { button.textContent = '複製'; }, 1500);
+    button.textContent = t('複製失敗');
+    setTimeout(() => { button.textContent = t('複製'); }, 1500);
   }
 }
 
@@ -1845,6 +1894,7 @@ function bindEvents() {
     }
   });
   $('themeToggle').addEventListener('click', cycleTheme);
+  $('langToggle').addEventListener('click', toggleLang);
   $('rollInspiration').addEventListener('click', () => rollInspiration());
   $('applyInspiration').addEventListener('click', applyInspiration);
   $('inspirationOutput').addEventListener('click', (event) => {
@@ -1881,6 +1931,7 @@ function bindEvents() {
 
 function init() {
   applyTheme(localStorage.getItem(THEME_STORAGE_KEY) || 'auto');
+  applyStaticI18n();
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('./sw.js').catch(() => {});
   }
