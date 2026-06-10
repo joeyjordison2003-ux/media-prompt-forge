@@ -25,6 +25,7 @@ import {
   AUDIT_RULES
 } from "./data.js";
 import { STYLE_CATEGORIES, CINEMATIC_STYLES } from "./styles_data.js";
+import { INSPIRATION_COLUMNS, INSPIRATION_OPTIONS } from "./inspiration_data.js";
 
 let currentMode = 'image';
 let activePanel = 'builder';
@@ -107,6 +108,46 @@ const FIELD_LABELS = {
   details: '關鍵細節',
   constraints: '約束 / 禁止項'
 };
+
+let currentInspiration = {};
+
+function rollInspiration(onlyKey) {
+  INSPIRATION_COLUMNS.forEach((column) => {
+    if (onlyKey && column.key !== onlyKey) return;
+    const options = INSPIRATION_OPTIONS[column.key] || [];
+    if (options.length) currentInspiration[column.key] = options[Math.floor(Math.random() * options.length)];
+  });
+  renderInspiration();
+}
+
+function renderInspiration() {
+  const summary = $('inspirationSummary');
+  if (!summary) return;
+  const total = INSPIRATION_COLUMNS.reduce((sum, column) => sum + (INSPIRATION_OPTIONS[column.key] || []).length, 0);
+  summary.innerHTML = `
+    <h4>靈感組合器 · ${total} 個短語 / ${INSPIRATION_COLUMNS.length} 類</h4>
+    <p>隨機抽一組跨類靈感打破空白頁；單行可重搖；滿意後填入生成器再細化。</p>
+  `;
+  $('inspirationOutput').innerHTML = INSPIRATION_COLUMNS.map((column) => `
+    <div class="style-row">
+      <span class="case-pill">${escapeHtml(column.label)}</span>
+      <span class="style-text">${escapeHtml(currentInspiration[column.key] || '——')}</span>
+      <span class="style-actions">
+        <button class="ghost-button reroll-one" type="button" data-key="${column.key}">重搖</button>
+      </span>
+    </div>
+  `).join('');
+}
+
+function applyInspiration() {
+  if (!Object.keys(currentInspiration).length) return;
+  INSPIRATION_COLUMNS.forEach((column) => {
+    const text = currentInspiration[column.key];
+    if (text) appendToField(column.targetField, text);
+  });
+  updatePanel('builder');
+  buildAll();
+}
 
 function renderOnboarding() {
   const card = $('onboardingCard');
@@ -330,6 +371,7 @@ function updatePanel(panel) {
   if (panel === 'frameworks') renderFrameworks();
   if (panel === 'styles') renderStyles();
   if (panel === 'history') renderHistory();
+  if (panel === 'inspiration') renderInspiration();
   if (panel === 'cases') renderCases();
   if (panel === 'export') renderExport();
   if (panel === 'qa') renderQa();
@@ -1627,6 +1669,7 @@ function buildAll() {
   renderFrameworkHints();
   renderStyles();
   renderHistory();
+  renderInspiration();
   renderCases();
   renderExport();
   renderQa();
@@ -1730,6 +1773,12 @@ function bindEvents() {
     }
     if (target.classList.contains('restore-history')) restoreHistoryEntry(id);
     if (target.classList.contains('delete-history')) deleteHistoryEntry(id);
+  });
+  $('rollInspiration').addEventListener('click', () => rollInspiration());
+  $('applyInspiration').addEventListener('click', applyInspiration);
+  $('inspirationOutput').addEventListener('click', (event) => {
+    const button = event.target.closest('.reroll-one');
+    if (button) rollInspiration(button.dataset.key);
   });
   $('onboardingCard').addEventListener('click', (event) => {
     if (event.target.closest('#dismissOnboarding')) {

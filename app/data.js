@@ -909,6 +909,18 @@ const SOURCE_RADAR_CARDS = [
     tags: ['cinematic-style', 'csv', 'style-library']
   },
   {
+    id: 'SRC014',
+    title: 'Jimeng 700+ Instruction Matrix',
+    area: 'template',
+    status: 'ingested',
+    priority: 'medium',
+    summary: '《即梦100多组（700+个）指令合集.xlsx》：7 類 × ~110 唯一短語（風格/鏡頭/人物/場景/細節/光效/文化）。',
+    insight: '已由 scripts/gen_inspiration_data.py 生成 inspiration_data.js，落地為靈感組合器面板（隨機組合 + 單項重搖 + 填入生成器）。',
+    sources: ['/Users/yinweiqi/Desktop/人物卡 2/分镜运镜提示词＋AI指令整理/分镜提示词合集/即梦100多组（700+个）指令合集.xlsx'],
+    nextAction: '同目錄 28個短視頻分鏡頭表格模板目錄待偵察。',
+    tags: ['jimeng', 'inspiration', 'matrix']
+  },
+  {
     id: 'SRC010',
     title: 'Product And Ecommerce Prompt Files',
     area: 'image',
@@ -1500,6 +1512,7 @@ const NAV_GROUPS = [
     { id: 'distiller', label: '清洗器' },
     { id: 'templates', label: '模板庫' },
     { id: 'memory', label: '記憶卡' },
+    { id: 'inspiration', label: '靈感組合' },
     { id: 'history', label: '歷史' }
   ] },
   { label: '知識', panels: [
