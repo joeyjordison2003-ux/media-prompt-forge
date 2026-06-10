@@ -14,6 +14,9 @@ import {
   EXAMPLES,
   SOURCE_RADAR_CARDS,
   KNOWLEDGE_GAPS,
+  NAV_GROUPS,
+  HISTORY_STORAGE_KEY,
+  HISTORY_LIMIT,
   MODEL_LOGIC_NOTES,
   LENS_GUIDE,
   PROMPT_FRAMEWORKS,
@@ -102,6 +105,84 @@ const FIELD_LABELS = {
   details: '關鍵細節',
   constraints: '約束 / 禁止項'
 };
+
+function populateNav() {
+  document.querySelector('.tool-nav').innerHTML = NAV_GROUPS.map((group) => `
+    <p class="nav-group-label">${group.label}</p>
+    ${group.panels.map((panel) => `<button class="nav-button${panel.id === activePanel ? ' active' : ''}" type="button" data-panel="${panel.id}" role="tab" aria-controls="panel-${panel.id}" aria-selected="${panel.id === activePanel}">${panel.label}</button>`).join('')}
+  `).join('');
+}
+
+function historyEntries() {
+  try {
+    return JSON.parse(localStorage.getItem(HISTORY_STORAGE_KEY)) || [];
+  } catch (error) {
+    return [];
+  }
+}
+
+const HISTORY_FIELD_IDS = ['taskType', 'frameworkSelect', 'ratio', 'duration', 'motionScale', 'motionProfile', 'expressionProfile', 'physicsProfile', 'subject', 'action', 'performanceNotes', 'scene', 'camera', 'light', 'style', 'details', 'constraints'];
+
+function saveHistoryEntry() {
+  const prompt = $('promptOutput').textContent.trim();
+  if (!prompt) return;
+  const entries = historyEntries();
+  if (entries[0] && entries[0].prompt === prompt) return;
+  const fields = {};
+  HISTORY_FIELD_IDS.forEach((id) => { if ($(id)) fields[id] = $(id).value; });
+  entries.unshift({
+    id: `H${Date.now()}`,
+    ts: Date.now(),
+    mode: currentMode,
+    taskLabel: currentTask().label,
+    prompt,
+    fields
+  });
+  localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(entries.slice(0, HISTORY_LIMIT)));
+  renderHistory();
+}
+
+function deleteHistoryEntry(id) {
+  localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(historyEntries().filter((entry) => entry.id !== id)));
+  renderHistory();
+}
+
+function restoreHistoryEntry(id) {
+  const entry = historyEntries().find((item) => item.id === id);
+  if (!entry) return;
+  updateMode(entry.mode);
+  Object.entries(entry.fields).forEach(([fieldId, fieldValue]) => setValue(fieldId, fieldValue));
+  populateFrameworkSelect();
+  if (entry.fields.frameworkSelect) setValue('frameworkSelect', entry.fields.frameworkSelect);
+  updatePanel('builder');
+  buildAll();
+}
+
+function renderHistory() {
+  const summary = $('historySummary');
+  if (!summary) return;
+  const query = value('historySearch').toLowerCase();
+  const entries = historyEntries().filter((entry) => !query || `${entry.prompt} ${entry.taskLabel}`.toLowerCase().includes(query));
+  summary.innerHTML = `
+    <h4>歷史 ${entries.length}/${historyEntries().length}</h4>
+    <p>每次點「生成提示詞」自動保存（只存在本機瀏覽器，上限 ${HISTORY_LIMIT} 條）。</p>
+  `;
+  $('historyOutput').innerHTML = entries.length ? entries.map((entry) => `
+    <article class="history-card">
+      <div class="card-topline">
+        <span class="case-pill">${new Date(entry.ts).toLocaleString()}</span>
+        <span class="case-pill">${entry.mode === 'image' ? '生圖' : '生視頻'}</span>
+        <span class="case-pill">${escapeHtml(entry.taskLabel)}</span>
+      </div>
+      <p>${escapeHtml(entry.prompt.slice(0, 160))}${entry.prompt.length > 160 ? '…' : ''}</p>
+      <div class="actions">
+        <button class="ghost-button copy-history" type="button" data-history-id="${entry.id}">複製</button>
+        <button class="ghost-button restore-history" type="button" data-history-id="${entry.id}">恢復</button>
+        <button class="ghost-button delete-history" type="button" data-history-id="${entry.id}">刪除</button>
+      </div>
+    </article>
+  `).join('') : '<p>還沒有歷史記錄。去生成器點「生成提示詞」。</p>';
+}
 
 function populateStyleFilters() {
   $('styleCategoryFilter').innerHTML = [
@@ -224,6 +305,7 @@ function updatePanel(panel) {
   if (panel === 'sources') renderSources();
   if (panel === 'frameworks') renderFrameworks();
   if (panel === 'styles') renderStyles();
+  if (panel === 'history') renderHistory();
   if (panel === 'cases') renderCases();
   if (panel === 'export') renderExport();
   if (panel === 'qa') renderQa();
@@ -1520,6 +1602,7 @@ function buildAll() {
   renderFrameworks();
   renderFrameworkHints();
   renderStyles();
+  renderHistory();
   renderCases();
   renderExport();
   renderQa();
@@ -1553,14 +1636,15 @@ function bindEvents() {
   document.querySelectorAll('.seg-button').forEach((button) => {
     button.addEventListener('click', () => updateMode(button.dataset.mode));
   });
-  document.querySelectorAll('.nav-button').forEach((button) => {
-    button.addEventListener('click', () => updatePanel(button.dataset.panel));
+  document.querySelector('.tool-nav').addEventListener('click', (event) => {
+    const button = event.target.closest('.nav-button');
+    if (button) updatePanel(button.dataset.panel);
   });
   document.querySelectorAll('textarea, select, input').forEach((field) => {
     field.addEventListener('input', buildAll);
     field.addEventListener('change', buildAll);
   });
-  $('buildPrompt').addEventListener('click', buildAll);
+  $('buildPrompt').addEventListener('click', () => { buildAll(); saveHistoryEntry(); });
   $('loadExample').addEventListener('click', loadExample);
   $('clearForm').addEventListener('click', clearForm);
   $('templateOutput').addEventListener('click', (event) => {
@@ -1612,6 +1696,23 @@ function bindEvents() {
       buildAll();
     }
   });
+  $('historyOutput').addEventListener('click', (event) => {
+    const target = event.target.closest('[data-history-id]');
+    if (!target) return;
+    const id = target.dataset.historyId;
+    if (target.classList.contains('copy-history')) {
+      const entry = historyEntries().find((item) => item.id === id);
+      if (entry) copyText(entry.prompt, target);
+    }
+    if (target.classList.contains('restore-history')) restoreHistoryEntry(id);
+    if (target.classList.contains('delete-history')) deleteHistoryEntry(id);
+  });
+  $('clearHistory').addEventListener('click', () => {
+    if (historyEntries().length && window.confirm('確定清空全部歷史？此操作不可恢復。')) {
+      localStorage.removeItem(HISTORY_STORAGE_KEY);
+      renderHistory();
+    }
+  });
   $('styleOutput').addEventListener('click', (event) => {
     const copyButton = event.target.closest('.copy-style');
     if (copyButton) {
@@ -1627,6 +1728,7 @@ function bindEvents() {
 }
 
 function init() {
+  populateNav();
   populateTasks();
   populateModels();
   populateProfiles();

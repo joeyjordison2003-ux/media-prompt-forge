@@ -1494,6 +1494,32 @@ const AUDIT_RULES = {
   }
 };
 
+const NAV_GROUPS = [
+  { label: '創作', panels: [
+    { id: 'builder', label: '生成器' },
+    { id: 'distiller', label: '清洗器' },
+    { id: 'templates', label: '模板庫' },
+    { id: 'memory', label: '記憶卡' },
+    { id: 'history', label: '歷史' }
+  ] },
+  { label: '知識', panels: [
+    { id: 'frameworks', label: '框架指南' },
+    { id: 'styles', label: '風格庫' },
+    { id: 'routes', label: '模型路由' },
+    { id: 'cases', label: '案例庫' },
+    { id: 'sources', label: '知識雷達' }
+  ] },
+  { label: '質檢與導出', panels: [
+    { id: 'adapters', label: '模型導出' },
+    { id: 'tests', label: '測試矩陣' },
+    { id: 'qa', label: 'QA 檢查' },
+    { id: 'export', label: '匯出' }
+  ] }
+];
+
+const HISTORY_STORAGE_KEY = 'mpf_prompt_history_v1';
+const HISTORY_LIMIT = 50;
+
 export {
   TASKS,
   MODEL_ROUTES,
@@ -1510,6 +1536,9 @@ export {
   EXAMPLES,
   SOURCE_RADAR_CARDS,
   KNOWLEDGE_GAPS,
+  NAV_GROUPS,
+  HISTORY_STORAGE_KEY,
+  HISTORY_LIMIT,
   MODEL_LOGIC_NOTES,
   LENS_GUIDE,
   PROMPT_FRAMEWORKS,

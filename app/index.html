@@ -28,19 +28,6 @@
       </div>
 
       <nav class="tool-nav" aria-label="工具" role="tablist">
-        <button class="nav-button active" type="button" data-panel="builder" role="tab" aria-controls="panel-builder" aria-selected="true">生成器</button>
-        <button class="nav-button" type="button" data-panel="distiller" role="tab" aria-controls="panel-distiller" aria-selected="false">清洗器</button>
-        <button class="nav-button" type="button" data-panel="frameworks" role="tab" aria-controls="panel-frameworks" aria-selected="false">框架指南</button>
-        <button class="nav-button" type="button" data-panel="styles" role="tab" aria-controls="panel-styles" aria-selected="false">風格庫</button>
-        <button class="nav-button" type="button" data-panel="routes" role="tab" aria-controls="panel-routes" aria-selected="false">模型路由</button>
-        <button class="nav-button" type="button" data-panel="adapters" role="tab" aria-controls="panel-adapters" aria-selected="false">模型導出</button>
-        <button class="nav-button" type="button" data-panel="templates" role="tab" aria-controls="panel-templates" aria-selected="false">模板庫</button>
-        <button class="nav-button" type="button" data-panel="memory" role="tab" aria-controls="panel-memory" aria-selected="false">記憶卡</button>
-        <button class="nav-button" type="button" data-panel="tests" role="tab" aria-controls="panel-tests" aria-selected="false">測試矩陣</button>
-        <button class="nav-button" type="button" data-panel="sources" role="tab" aria-controls="panel-sources" aria-selected="false">知識雷達</button>
-        <button class="nav-button" type="button" data-panel="cases" role="tab" aria-controls="panel-cases" aria-selected="false">案例庫</button>
-        <button class="nav-button" type="button" data-panel="export" role="tab" aria-controls="panel-export" aria-selected="false">匯出</button>
-        <button class="nav-button" type="button" data-panel="qa" role="tab" aria-controls="panel-qa" aria-selected="false">QA 檢查</button>
       </nav>
 
       <div class="source-note">
@@ -234,6 +221,20 @@
             </div>
             <div id="styleSummary" class="evaluation-card"></div>
             <div id="styleOutput" class="style-list"></div>
+          </div>
+
+          <div class="tab-panel" id="panel-history" role="tabpanel" aria-hidden="true">
+            <div class="case-controls">
+              <label>
+                搜索歷史
+                <input id="historySearch" type="search" placeholder="按 prompt 內容或任務搜索">
+              </label>
+            </div>
+            <div id="historySummary" class="evaluation-card"></div>
+            <div id="historyOutput" class="history-list"></div>
+            <div class="actions">
+              <button class="secondary-button" id="clearHistory" type="button">清空全部歷史</button>
+            </div>
           </div>
 
           <div class="tab-panel" id="panel-routes" role="tabpanel" aria-hidden="true">

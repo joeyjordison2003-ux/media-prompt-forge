@@ -734,3 +734,37 @@ pre {
     flex-wrap: wrap;
   }
 }
+
+/* 分組導航與歷史（nav-grouping-and-prompt-history） */
+.nav-group-label {
+  margin: 12px 0 4px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.tool-nav .nav-group-label:first-child {
+  margin-top: 0;
+}
+
+.history-list {
+  display: grid;
+  gap: 10px;
+}
+
+.history-card {
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  padding: 12px;
+  background: #fbfcfa;
+  min-width: 0;
+}
+
+.history-card p {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
