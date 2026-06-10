@@ -22,6 +22,7 @@
         <button class="nav-button active" type="button" data-panel="builder" role="tab" aria-controls="panel-builder" aria-selected="true">生成器</button>
         <button class="nav-button" type="button" data-panel="distiller" role="tab" aria-controls="panel-distiller" aria-selected="false">清洗器</button>
         <button class="nav-button" type="button" data-panel="frameworks" role="tab" aria-controls="panel-frameworks" aria-selected="false">框架指南</button>
+        <button class="nav-button" type="button" data-panel="styles" role="tab" aria-controls="panel-styles" aria-selected="false">風格庫</button>
         <button class="nav-button" type="button" data-panel="routes" role="tab" aria-controls="panel-routes" aria-selected="false">模型路由</button>
         <button class="nav-button" type="button" data-panel="adapters" role="tab" aria-controls="panel-adapters" aria-selected="false">模型導出</button>
         <button class="nav-button" type="button" data-panel="templates" role="tab" aria-controls="panel-templates" aria-selected="false">模板庫</button>
@@ -207,6 +208,23 @@
             </div>
             <div id="frameworkLogic" class="evaluation-card"></div>
             <div id="frameworkOutput" class="framework-list"></div>
+          </div>
+
+          <div class="tab-panel" id="panel-styles" role="tabpanel" aria-hidden="true">
+            <div class="case-controls">
+              <label>
+                搜索風格
+                <input id="styleSearch" type="search" placeholder="例：王家卫、胶片、霓虹、手持">
+              </label>
+              <div class="two-col">
+                <label>
+                  類別
+                  <select id="styleCategoryFilter"></select>
+                </label>
+              </div>
+            </div>
+            <div id="styleSummary" class="evaluation-card"></div>
+            <div id="styleOutput" class="style-list"></div>
           </div>
 
           <div class="tab-panel" id="panel-routes" role="tabpanel" aria-hidden="true">

@@ -897,6 +897,18 @@ const SOURCE_RADAR_CARDS = [
     tags: ['Seedance 2.0 分镜提示词生成专家', 'template', 'seo']
   },
   {
+    id: 'SRC013',
+    title: 'Cinematic Style Prompt CSV (300)',
+    area: 'template',
+    status: 'ingested',
+    priority: 'medium',
+    summary: '《300+电影风格提示词.csv》：影視風格/畫面質感/燈光色調/攝影手法/平台風格 5 類 × 60 條。',
+    insight: '已由 scripts/gen_styles_data.py 生成 app/styles_data.js，落地為風格庫面板 + public/styles.html SEO 頁。',
+    sources: ['/Users/yinweiqi/Desktop/人物卡 2/分镜运镜提示词＋AI指令整理/分镜提示词合集/300+电影风格提示词.csv'],
+    nextAction: '同目錄 XLSX 組合矩陣與即夢 700+ 指令合集待偵察（bulk-template-mining 候選）。',
+    tags: ['cinematic-style', 'csv', 'style-library']
+  },
+  {
     id: 'SRC010',
     title: 'Product And Ecommerce Prompt Files',
     area: 'image',

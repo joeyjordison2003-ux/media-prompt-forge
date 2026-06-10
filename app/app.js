@@ -19,6 +19,7 @@ import {
   PROMPT_FRAMEWORKS,
   AUDIT_RULES
 } from "./data.js";
+import { STYLE_CATEGORIES, CINEMATIC_STYLES } from "./styles_data.js";
 
 let currentMode = 'image';
 let activePanel = 'builder';
@@ -102,6 +103,51 @@ const FIELD_LABELS = {
   constraints: '約束 / 禁止項'
 };
 
+function populateStyleFilters() {
+  $('styleCategoryFilter').innerHTML = [
+    '<option value="all">全部類別</option>',
+    ...STYLE_CATEGORIES.map((cat) => `<option value="${cat.id}">${cat.label}</option>`)
+  ].join('');
+}
+
+function styleCategory(id) {
+  return STYLE_CATEGORIES.find((cat) => cat.id === id) || null;
+}
+
+function filteredStyles() {
+  const query = value('styleSearch').toLowerCase();
+  const category = value('styleCategoryFilter') || 'all';
+  return CINEMATIC_STYLES.filter((item) => {
+    const queryOk = !query || item.text.toLowerCase().includes(query);
+    const categoryOk = category === 'all' || item.category === category;
+    return queryOk && categoryOk;
+  });
+}
+
+function renderStyles() {
+  const summary = $('styleSummary');
+  if (!summary) return;
+  const items = filteredStyles();
+  const counts = STYLE_CATEGORIES.map((cat) => `${cat.label} ${CINEMATIC_STYLES.filter((item) => item.category === cat.id).length}`).join(' · ');
+  summary.innerHTML = `
+    <h4>風格庫 ${items.length}/${CINEMATIC_STYLES.length}</h4>
+    <p>${escapeHtml(counts)}。點「插入」寫入對應欄位（燈光→光線、攝影→鏡頭、其餘→風格）。</p>
+  `;
+  $('styleOutput').innerHTML = items.length ? items.map((item) => {
+    const cat = styleCategory(item.category);
+    return `
+      <div class="style-row">
+        <span class="case-pill">${escapeHtml(cat ? cat.label : item.category)}</span>
+        <span class="style-text">${escapeHtml(item.text)}</span>
+        <span class="style-actions">
+          <button class="ghost-button copy-style" type="button" data-text="${escapeHtml(item.text)}">複製</button>
+          <button class="ghost-button insert-style" type="button" data-text="${escapeHtml(item.text)}" data-target="${cat ? cat.targetField : 'style'}">插入</button>
+        </span>
+      </div>
+    `;
+  }).join('') : '<p>沒有匹配的風格。</p>';
+}
+
 function populateFrameworkSelect() {
   const select = $('frameworkSelect');
   const previous = select.value;
@@ -177,6 +223,7 @@ function updatePanel(panel) {
   if (panel === 'tests') renderTestMatrix();
   if (panel === 'sources') renderSources();
   if (panel === 'frameworks') renderFrameworks();
+  if (panel === 'styles') renderStyles();
   if (panel === 'cases') renderCases();
   if (panel === 'export') renderExport();
   if (panel === 'qa') renderQa();
@@ -1472,6 +1519,7 @@ function buildAll() {
   renderSources();
   renderFrameworks();
   renderFrameworkHints();
+  renderStyles();
   renderCases();
   renderExport();
   renderQa();
@@ -1564,6 +1612,18 @@ function bindEvents() {
       buildAll();
     }
   });
+  $('styleOutput').addEventListener('click', (event) => {
+    const copyButton = event.target.closest('.copy-style');
+    if (copyButton) {
+      copyText(copyButton.dataset.text, copyButton);
+      return;
+    }
+    const insertButton = event.target.closest('.insert-style');
+    if (insertButton) {
+      appendToField(insertButton.dataset.target, insertButton.dataset.text);
+      buildAll();
+    }
+  });
 }
 
 function init() {
@@ -1576,6 +1636,7 @@ function init() {
   populateTestFilters();
   populateSourceFilters();
   populateFrameworkSelect();
+  populateStyleFilters();
   loadMemoryCards();
   document.querySelectorAll('.video-only').forEach((node) => node.classList.add('is-hidden'));
   bindEvents();

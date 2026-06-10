@@ -697,3 +697,40 @@ pre {
 .lookup-table td {
   color: var(--muted);
 }
+
+/* 風格庫（cinematic-style-library） */
+.style-list {
+  display: grid;
+  gap: 8px;
+}
+
+.style-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  padding: 8px 12px;
+  background: #fbfcfa;
+  min-width: 0;
+}
+
+.style-text {
+  flex: 1;
+  font-size: 13px;
+  color: var(--ink);
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.style-actions {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+@media (max-width: 720px) {
+  .style-row {
+    flex-wrap: wrap;
+  }
+}
