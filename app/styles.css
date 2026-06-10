@@ -768,3 +768,26 @@ pre {
   line-height: 1.5;
   overflow-wrap: anywhere;
 }
+
+/* 快速開始引導卡（onboarding-quickstart） */
+.onboarding-card {
+  border: 1px solid rgba(15, 118, 110, 0.45);
+  border-radius: 8px;
+  padding: 12px 14px;
+  background: var(--surface-2);
+  margin-bottom: 4px;
+}
+
+.onboarding-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.onboarding-card p {
+  margin: 6px 0;
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.5;
+}

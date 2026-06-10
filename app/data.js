@@ -1517,6 +1517,13 @@ const NAV_GROUPS = [
   ] }
 ];
 
+const ONBOARDING_STORAGE_KEY = 'mpf_onboarding_dismissed_v1';
+const ONBOARDING_STEPS = [
+  { title: '1 · 選任務與框架', text: '左上選任務類型（角色卡/分鏡/商品圖…），再選領域框架（PLATE 美食 / FACE 人像 / SEEDANCE 分鏡…）獲得專業詞彙提示。' },
+  { title: '2 · 從模板或範例開始', text: '不想從零寫？打開模板庫一鍵套用 9 個成熟模板，或點「載入範例」看正確填法。' },
+  { title: '3 · 生成並審計', text: '點「生成提示詞」得到 model-facing prompt；貼到清洗器可做垃圾標籤清洗、衝突審計與文字預算檢查。每次生成自動存入歷史（只在你的瀏覽器）。' }
+];
+
 const HISTORY_STORAGE_KEY = 'mpf_prompt_history_v1';
 const HISTORY_LIMIT = 50;
 
@@ -1537,6 +1544,8 @@ export {
   SOURCE_RADAR_CARDS,
   KNOWLEDGE_GAPS,
   NAV_GROUPS,
+  ONBOARDING_STORAGE_KEY,
+  ONBOARDING_STEPS,
   HISTORY_STORAGE_KEY,
   HISTORY_LIMIT,
   MODEL_LOGIC_NOTES,

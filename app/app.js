@@ -15,6 +15,8 @@ import {
   SOURCE_RADAR_CARDS,
   KNOWLEDGE_GAPS,
   NAV_GROUPS,
+  ONBOARDING_STORAGE_KEY,
+  ONBOARDING_STEPS,
   HISTORY_STORAGE_KEY,
   HISTORY_LIMIT,
   MODEL_LOGIC_NOTES,
@@ -105,6 +107,28 @@ const FIELD_LABELS = {
   details: '關鍵細節',
   constraints: '約束 / 禁止項'
 };
+
+function renderOnboarding() {
+  const card = $('onboardingCard');
+  if (!card) return;
+  const dismissed = localStorage.getItem(ONBOARDING_STORAGE_KEY) === '1';
+  card.classList.toggle('is-hidden', dismissed);
+  if (dismissed) {
+    card.innerHTML = '';
+    return;
+  }
+  card.innerHTML = `
+    <div class="onboarding-head">
+      <strong>快速開始</strong>
+      <button class="ghost-button" id="dismissOnboarding" type="button">不再顯示</button>
+    </div>
+    ${ONBOARDING_STEPS.map((step) => `<p><strong>${escapeHtml(step.title)}</strong> ${escapeHtml(step.text)}</p>`).join('')}
+    <div class="actions">
+      <button class="ghost-button" id="onboardingTemplates" type="button">打開模板庫</button>
+      <button class="ghost-button" id="onboardingExample" type="button">載入範例</button>
+    </div>
+  `;
+}
 
 function populateNav() {
   document.querySelector('.tool-nav').innerHTML = NAV_GROUPS.map((group) => `
@@ -1707,6 +1731,14 @@ function bindEvents() {
     if (target.classList.contains('restore-history')) restoreHistoryEntry(id);
     if (target.classList.contains('delete-history')) deleteHistoryEntry(id);
   });
+  $('onboardingCard').addEventListener('click', (event) => {
+    if (event.target.closest('#dismissOnboarding')) {
+      localStorage.setItem(ONBOARDING_STORAGE_KEY, '1');
+      renderOnboarding();
+    }
+    if (event.target.closest('#onboardingTemplates')) updatePanel('templates');
+    if (event.target.closest('#onboardingExample')) loadExample();
+  });
   $('clearHistory').addEventListener('click', () => {
     if (historyEntries().length && window.confirm('確定清空全部歷史？此操作不可恢復。')) {
       localStorage.removeItem(HISTORY_STORAGE_KEY);
@@ -1729,6 +1761,7 @@ function bindEvents() {
 
 function init() {
   populateNav();
+  renderOnboarding();
   populateTasks();
   populateModels();
   populateProfiles();
