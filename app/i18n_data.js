@@ -128,7 +128,20 @@ const EN_MAP = {
   '不加強': 'None',
   // 摘要標題（動態）
   '語言：中文': 'Language: EN',
-  '高優先級缺口': 'High-priority gaps'
+  '高優先級缺口': 'High-priority gaps',
+  '本地數據備份': 'Local data backup',
+  '記憶卡、歷史、主題與語言偏好只存在本機瀏覽器。換瀏覽器或清緩存前先導出備份。': 'Memory cards, history, theme and language live only in this browser. Export a backup before switching browsers or clearing cache.',
+  '導出備份 JSON': 'Export backup JSON',
+  '導入備份': 'Import backup',
+  '備份文件不是有效 JSON。': 'Backup file is not valid JSON.',
+  '備份文件版本不符（需要 mpf-backup-v1）。': 'Backup schema mismatch (expects mpf-backup-v1).',
+  '備份包含': 'Backup contains',
+  '張記憶卡': 'memory card(s)',
+  '條歷史': 'history item(s)',
+  '「確定」= 完全覆蓋現有數據；「取消」= 合併（按 id 去重，不覆蓋現有）。': 'OK = replace existing data; Cancel = merge (dedupe by id, keep existing).',
+  '導入完成': 'Import complete',
+  '覆蓋模式': 'replace mode',
+  '合併模式': 'merge mode'
 };
 
 export { EN_MAP };

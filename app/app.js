@@ -1516,6 +1516,86 @@ function renderExport() {
   $('exportOutput').textContent = exportText();
 }
 
+const BACKUP_SCHEMA = 'mpf-backup-v1';
+
+function collectBackup() {
+  return {
+    schema: BACKUP_SCHEMA,
+    exportedAt: new Date().toISOString(),
+    memoryCards: customMemoryCards,
+    history: historyEntries(),
+    theme: localStorage.getItem(THEME_STORAGE_KEY) || null,
+    lang: localStorage.getItem(LANG_STORAGE_KEY) || null,
+    onboardingDismissed: localStorage.getItem(ONBOARDING_STORAGE_KEY) === '1'
+  };
+}
+
+function downloadBackup() {
+  const stamp = new Date().toISOString().slice(0, 10);
+  const blob = new Blob([JSON.stringify(collectBackup(), null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `mpf-backup-${stamp}.json`;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+}
+
+function backupStatus(message, isError) {
+  const node = $('backupStatus');
+  node.classList.remove('is-hidden');
+  node.innerHTML = `<p${isError ? ' class="before-text"' : ''}>${escapeHtml(message)}</p>`;
+}
+
+function importBackup(file) {
+  const reader = new FileReader();
+  reader.onload = () => {
+    let data;
+    try {
+      data = JSON.parse(reader.result);
+    } catch (error) {
+      backupStatus(t('備份文件不是有效 JSON。'), true);
+      return;
+    }
+    if (!data || data.schema !== BACKUP_SCHEMA) {
+      backupStatus(t('備份文件版本不符（需要 mpf-backup-v1）。'), true);
+      return;
+    }
+    const cards = Array.isArray(data.memoryCards) ? data.memoryCards.filter((card) => card && card.id && card.type && card.title) : [];
+    const history = Array.isArray(data.history) ? data.history.filter((entry) => entry && entry.id && entry.prompt) : [];
+    const replace = window.confirm(`${t('備份包含')} ${cards.length} ${t('張記憶卡')}、${history.length} ${t('條歷史')}。\n${t('「確定」= 完全覆蓋現有數據；「取消」= 合併（按 id 去重，不覆蓋現有）。')}`);
+    if (replace) {
+      customMemoryCards = cards;
+      localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(history.slice(0, HISTORY_LIMIT)));
+    } else {
+      const cardIds = new Set(customMemoryCards.map((card) => card.id));
+      customMemoryCards = [...customMemoryCards, ...cards.filter((card) => !cardIds.has(card.id))];
+      const existing = historyEntries();
+      const historyIds = new Set(existing.map((entry) => entry.id));
+      const merged = [...existing, ...history.filter((entry) => !historyIds.has(entry.id))]
+        .sort((a, b) => (b.ts || 0) - (a.ts || 0))
+        .slice(0, HISTORY_LIMIT);
+      localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(merged));
+    }
+    saveMemoryCards();
+    if (data.theme === 'light' || data.theme === 'dark') localStorage.setItem(THEME_STORAGE_KEY, data.theme);
+    if (data.lang === 'en') localStorage.setItem(LANG_STORAGE_KEY, 'en');
+    if (data.onboardingDismissed) localStorage.setItem(ONBOARDING_STORAGE_KEY, '1');
+    currentLang = localStorage.getItem(LANG_STORAGE_KEY) === 'en' ? 'en' : 'zh';
+    applyTheme(localStorage.getItem(THEME_STORAGE_KEY) || 'auto');
+    applyStaticI18n();
+    populateNav();
+    populateTasks();
+    populateFrameworkSelect();
+    renderOnboarding();
+    buildAll();
+    backupStatus(`${t('導入完成')}：${t('記憶卡')} ${customMemoryCards.length}，${t('歷史')} ${historyEntries().length}（${replace ? t('覆蓋模式') : t('合併模式')}）。`);
+  };
+  reader.readAsText(file);
+}
+
 function downloadExport() {
   const format = value('exportFormat') === 'json' ? 'json' : 'md';
   const filenameBase = (value('exportFilename') || 'media-prompt-forge-export').replace(/[^a-z0-9_-]+/gi, '-').replace(/^-|-$/g, '') || 'media-prompt-forge-export';
@@ -1841,6 +1921,12 @@ function bindEvents() {
     copyText($('exportOutput').textContent, event.currentTarget);
   });
   $('downloadExport').addEventListener('click', downloadExport);
+  $('downloadBackup').addEventListener('click', downloadBackup);
+  $('importBackupFile').addEventListener('change', (event) => {
+    const file = event.target.files && event.target.files[0];
+    if (file) importBackup(file);
+    event.target.value = '';
+  });
   $('copyPrompt').addEventListener('click', (event) => {
     const text = activePanel === 'distiller' ? $('distillOutput').textContent : $('promptOutput').textContent;
     copyText(text, event.currentTarget);

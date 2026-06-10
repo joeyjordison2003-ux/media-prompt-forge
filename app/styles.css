@@ -834,3 +834,14 @@ pre {
   width: 100%;
   margin-bottom: 10px;
 }
+
+.file-button {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.backup-note {
+  color: var(--muted);
+  font-size: 13px;
+}
