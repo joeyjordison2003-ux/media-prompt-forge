@@ -137,8 +137,8 @@ function renderCameraMoves() {
       <span class="case-pill">${escapeHtml(item.name)}</span>
       <span class="style-text">${escapeHtml(item.template)}${item.scene ? `<br><em>適配：${escapeHtml(item.scene)}</em>` : ''}</span>
       <span class="style-actions">
-        <button class="ghost-button copy-style" type="button" data-text="${escapeHtml(item.template)}">${t('複製')}</button>
-        <button class="ghost-button insert-move" type="button" data-text="${escapeHtml(item.template)}">${t('插入')}</button>
+        <button class="ghost-button copy-style" type="button" data-text="${escapeHtml(item.template)}" aria-label="${t('複製')}：${escapeHtml(item.name)}">${t('複製')}</button>
+        <button class="ghost-button insert-move" type="button" data-text="${escapeHtml(item.template)}" aria-label="${t('插入')}：${escapeHtml(item.name)}">${t('插入')}</button>
       </span>
     </div>
   `).join('') : '<p>沒有匹配的運鏡模板。</p>';
@@ -168,7 +168,7 @@ function renderInspiration() {
       <span class="case-pill">${escapeHtml(column.label)}</span>
       <span class="style-text">${escapeHtml(currentInspiration[column.key] || '——')}</span>
       <span class="style-actions">
-        <button class="ghost-button reroll-one" type="button" data-key="${column.key}">${t('重搖')}</button>
+        <button class="ghost-button reroll-one" type="button" data-key="${column.key}" aria-label="${t('重搖')}：${escapeHtml(column.label)}">${t('重搖')}</button>
       </span>
     </div>
   `).join('');
@@ -346,9 +346,9 @@ function renderHistory() {
       </div>
       <p>${escapeHtml(entry.prompt.slice(0, 160))}${entry.prompt.length > 160 ? '…' : ''}</p>
       <div class="actions">
-        <button class="ghost-button copy-history" type="button" data-history-id="${entry.id}">${t('複製')}</button>
-        <button class="ghost-button restore-history" type="button" data-history-id="${entry.id}">${t('恢復')}</button>
-        <button class="ghost-button delete-history" type="button" data-history-id="${entry.id}">${t('刪除')}</button>
+        <button class="ghost-button copy-history" type="button" data-history-id="${entry.id}" aria-label="${t('複製')}：${escapeHtml(entry.taskLabel)}">${t('複製')}</button>
+        <button class="ghost-button restore-history" type="button" data-history-id="${entry.id}" aria-label="${t('恢復')}：${escapeHtml(entry.taskLabel)}">${t('恢復')}</button>
+        <button class="ghost-button delete-history" type="button" data-history-id="${entry.id}" aria-label="${t('刪除')}：${escapeHtml(entry.taskLabel)}">${t('刪除')}</button>
       </div>
     </article>
   `).join('') : '<p>還沒有歷史記錄。去生成器點「生成提示詞」。</p>';
@@ -391,8 +391,8 @@ function renderStyles() {
         <span class="case-pill">${escapeHtml(cat ? cat.label : item.category)}</span>
         <span class="style-text">${escapeHtml(item.text)}</span>
         <span class="style-actions">
-          <button class="ghost-button copy-style" type="button" data-text="${escapeHtml(item.text)}">${t('複製')}</button>
-          <button class="ghost-button insert-style" type="button" data-text="${escapeHtml(item.text)}" data-target="${cat ? cat.targetField : 'style'}">${t('插入')}</button>
+          <button class="ghost-button copy-style" type="button" data-text="${escapeHtml(item.text)}" aria-label="${t('複製')}：${escapeHtml(item.text.slice(0, 30))}">${t('複製')}</button>
+          <button class="ghost-button insert-style" type="button" data-text="${escapeHtml(item.text)}" data-target="${cat ? cat.targetField : 'style'}" aria-label="${t('插入')}：${escapeHtml(item.text.slice(0, 30))}">${t('插入')}</button>
         </span>
       </div>
     `;
@@ -1347,7 +1347,7 @@ function renderFrameworks() {
         <div class="cheat-group">
           <p class="cheat-head">${escapeHtml(group.group)} <span>→ ${escapeHtml(FIELD_LABELS[group.targetField] || group.targetField)}</span></p>
           <div class="chip-row">
-            ${group.words.map((word) => `<button class="chip copy-word" type="button" data-word="${escapeHtml(word.en)}">${escapeHtml(word.en)} <span>${escapeHtml(word.zh)}</span></button>`).join('')}
+            ${group.words.map((word) => `<button class="chip copy-word" type="button" data-word="${escapeHtml(word.en)}" aria-label="${t('複製')}：${escapeHtml(word.en)}">${escapeHtml(word.en)} <span>${escapeHtml(word.zh)}</span></button>`).join('')}
           </div>
         </div>
       `).join('')}
